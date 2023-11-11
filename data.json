@@ -1,0 +1,8 @@
+[
+    {"customer_id": 1, "first_name": "John", "last_name": "Doe", "company": "ABC Corp", "address": "123 Main St", "email": "john.doe@example.com"},
+    {"customer_id": 2, "first_name": "Jane", "last_name": "Smith", "company": "XYZ Inc", "address": "456 Oak St", "email": "jane.smith@example.com"},
+    {"customer_id": 3, "first_name": "Bob", "last_name": "Johnson", "company": "123 Co", "address": "789 Maple St", "email": "bob.johnson@example.com"},
+    {"customer_id": 4, "first_name": "Alice", "last_name": "Williams", "company": "456 Ltd", "address": "987 Pine St", "email": "alice.williams@example.com"},
+    {"customer_id": 5, "first_name": "Charlie", "last_name": "Brown", "company": "789 LLC", "address": "654 Cedar St", "email": "charlie.brown@example.com"}
+]
+    
