@@ -6,6 +6,7 @@ import json
 with open("./data.json") as f:
     data = json.load(f)
 
+app = Flask(__name__, static_url_path="/static")
 app = Flask(__name__)
 sqlDB = "db/ShoppingDB.db"
 
@@ -210,7 +211,9 @@ def customer_orders(customer_id):
         columns = [column[0] for column in cursor.description]
         order_list = [dict(zip(columns, row)) for row in orders]
 
-        return render_template("customer_orders.html", customer_id=customer_id, orders=order_list)
+        return render_template(
+            "customer_orders.html", customer_id=customer_id, orders=order_list
+        )
 
 
 # d)
