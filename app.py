@@ -1,4 +1,5 @@
 # C1
+# a)
 from flask import Flask, render_template, request, jsonify
 import sqlite3
 import json
@@ -54,15 +55,20 @@ def get_customers():
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM Customers")
         customers = cursor.fetchall()
-        columns = [column[0] for column in cursor.description]
-        customer_list = [dict(zip(columns, row)) for row in customers]
+        columns = [column[0] for column in cursor.description]  # lấy tên các cột
+        customer_list = [
+            dict(zip(columns, row)) for row in customers
+        ]  # tạo dict từ các cột và các giá trị tương ứng
+        # return jsonify(customer_list)
         return render_template("customers.html", customers=customer_list)
 
 
 # b)
 @app.route("/Customers", methods=["DELETE"])
 def delete_customer():
-    customer_id = request.args.get("customer_id")
+    customer_id = request.args.get(
+        "customer_id"
+    )  # lấy giá trị của tham số customer_id. Được truyền vào qua url
 
     if customer_id is None:
         return jsonify({"error": "Thiếu id"}), 400
@@ -77,9 +83,15 @@ def delete_customer():
 
 # C3
 # a)
+@app.route("/Customers/new", methods=["GET"])
+def new_customer():
+    return render_template("new_customer.html")
+
+
 @app.route("/Customers", methods=["POST"])
-def add_customer():
-    customer_data = request.json
+def add_customer():  # form
+    # get data from form
+    customer_data = request.form
 
     if not customer_data:
         return jsonify({"error": "Thiếu thông tin của Customer"}), 400
@@ -101,8 +113,13 @@ def add_customer():
         )
         connection.commit()
 
-        # Get the last inserted row id (customer_id)
+        # Lấy id của customer vừa thêm vào
         last_row_id = cursor.lastrowid
+
+        return render_template(
+            "new_customer.html",
+            message="Customer added successfully",
+        )
 
         return jsonify(
             {"customer_id": last_row_id, "message": "Customer added successfully"}
@@ -110,9 +127,31 @@ def add_customer():
 
 
 # b)
+@app.route("/Customers/<int:customer_id>", methods=["GET"])
+def edit_customer(customer_id):
+    with connect_db() as connection:
+        cursor = connection.cursor()
+        cursor.execute(
+            """
+            SELECT * FROM Customers
+            WHERE customer_id=?
+            """,
+            (customer_id,),
+        )
+        customer = cursor.fetchone()
+
+        if customer is None:
+            return jsonify({"error": f"Customer with ID {customer_id} not found"}), 404
+
+        columns = [column[0] for column in cursor.description]
+        customer_dict = dict(zip(columns, customer))
+
+        return jsonify(customer_dict)
+
+
 @app.route("/Customers", methods=["PUT"])
 def update_customer():
-    customer_id = request.json.get("customer_id")
+    customer_id = request.args.get("customer_id")
 
     if customer_id is None:
         return jsonify({"error": "Thiếu id của Customer"}), 400
@@ -160,6 +199,7 @@ def check_customer():
         customer = cursor.fetchone()
 
         if customer:
+            columns = [column[0] for column in cursor.description]
             return jsonify({"exists": True, "customer": dict(zip(columns, customer))})
         else:
             return jsonify({"exists": False, "message": "Customer not found"})
@@ -211,6 +251,7 @@ def customer_orders(customer_id):
         columns = [column[0] for column in cursor.description]
         order_list = [dict(zip(columns, row)) for row in orders]
 
+        # return jsonify({"orders": order_list})
         return render_template(
             "customer_orders.html", customer_id=customer_id, orders=order_list
         )
@@ -220,6 +261,34 @@ def customer_orders(customer_id):
 @app.route("/InsertCustomers", methods=["POST"])
 def insert_customers():
     customers_data = request.json.get("customers")
+    # Ví dụ payload cho postman
+    ""
+    {
+        "customers": [
+            {
+                "first_name": "rick",
+                "last_name": "sanchez",
+                "company": "ABC",
+                "address": "123 ABC Street",
+                "email": "test123@gmail.com",
+            },
+            {
+                "first_name": "rick1",
+                "last_name": "sanchez1",
+                "company": "ABC",
+                "address": "234 ABC Street",
+                "email": "test123@gmail.com",
+            },
+            {
+                "first_name": "rick2",
+                "last_name": "sanchez2",
+                "company": "ABC",
+                "address": "345 ABC Street",
+                "email": "test123@gmail.com",
+            },
+        ]
+    }
+    ""
 
     if not customers_data or not isinstance(customers_data, list):
         return (

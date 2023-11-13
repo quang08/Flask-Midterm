@@ -10,8 +10,35 @@
     <h1>Customer List</h1>
     <ul>
         {% for customer in customers %}
-            <li>{{ customer.first_name }} {{ customer.last_name }} - {{ customer.email }}</li>
+            <li>
+                {{ customer.first_name }} {{ customer.last_name }} - {{ customer.email }}
+                <button onclick="deleteCustomer('{{ customer.customer_id }}')">Delete</button>
+            </li>
         {% endfor %}
+
+        {% if message %}
+            <p>{{ message }}</p>
+        {% endif %}
+
+        <a href="/Customers/new">Add New Customer</a>
     </ul>
+
+    <script>
+        function deleteCustomer(customerId) {
+            if (confirm("Are you sure you want to delete this customer?")) {
+                fetch(`/Customers?customer_id=${customerId}`, {
+                    method: 'DELETE',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response as needed
+                    console.log(data);
+                    // Reload the page or update the customer list if necessary
+                    location.reload();
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+    </script>
 </body>
 </html>

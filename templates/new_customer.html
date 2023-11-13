@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='customer-add.css') }}">
+</head>
+<body>
+    <!--create basic form to add new customers with fields of first name, lastname, email-->
+    <form action="/Customers" method="POST">
+        <label for="first_name">First Name</label>
+        <input type="text" name="first_name" id="first_name" required>
+
+        <label for="last_name">Last Name</label>
+        <input type="text" name="last_name" id="last_name" required>
+
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required>
+
+        <input type="submit" value="Add Customer">
+    </form>
+
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+
+    <a href="/Customers">Back to Customer List</a>
+</body>
+</html>
